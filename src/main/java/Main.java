@@ -1,10 +1,8 @@
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.nio.ByteBuffer;
-import java.util.BitSet;
 
-import static java.nio.ByteOrder.BIG_ENDIAN;
+import static java.lang.System.arraycopy;
 
 public class Main {
     public static void main(String[] args) {
@@ -15,20 +13,12 @@ public class Main {
                 serverSocket.receive(packet);
                 System.out.println("Received data");
 
-                short id = (short) 1234;
-                final var bitSet = new BitSet(8);
-                bitSet.flip(7);
-                short zero = (short) 0;
-                final var bufResponse = ByteBuffer.allocate(12)
-                        .order(BIG_ENDIAN)
-                        .putShort(id)
-                        .put(bitSet.toByteArray())
-                        .put((byte) 0)
-                        .putShort(zero)
-                        .putShort(zero)
-                        .putShort(zero)
-                        .putShort(zero)
-                        .array();
+                final var header = DnsMessage.header((short) 1234, true);
+                final var questionPacket = DnsQuestion.question("codecrafters.io", DnsQuestion.Qtype.A, DnsQuestion.Cclass.IN);
+
+                final var bufResponse = new byte[header.length + questionPacket.length];
+                arraycopy(header, 0, bufResponse, 0, header.length);
+                arraycopy(questionPacket, 0, bufResponse, header.length, questionPacket.length);
 
                 final DatagramPacket packetResponse = new DatagramPacket(bufResponse, bufResponse.length, packet.getSocketAddress());
                 serverSocket.send(packetResponse);
@@ -36,5 +26,18 @@ public class Main {
         } catch (IOException e) {
             System.out.println("IOException: " + e.getMessage());
         }
+    }
+
+    private static void printByteBuffer(byte[] bytes) {
+        int counter = 0;
+        for (byte b : bytes) {
+            if (counter > 1) {
+                System.out.println("");
+                counter = 0;
+            }
+            System.out.print(Integer.toBinaryString(b) + " ");
+            counter++;
+        }
+        System.out.println("");
     }
 }
