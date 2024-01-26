@@ -14,11 +14,13 @@ public class Main {
                 System.out.println("Received data");
 
                 final var header = DnsMessage.header((short) 1234, true);
-                final var questionPacket = DnsQuestion.question("codecrafters.io", DnsQuestion.Qtype.A, DnsQuestion.Cclass.IN);
+                final var questionPacket = DnsQuestion.question("codecrafters.io", DnsTypes.Qtype.A, DnsTypes.Cclass.IN);
+                final var answerPacket = DnsAnswer.answer("codecrafters.io", DnsTypes.Qtype.A, DnsTypes.Cclass.IN);
 
-                final var bufResponse = new byte[header.length + questionPacket.length];
+                final var bufResponse = new byte[header.length + questionPacket.length + answerPacket.length];
                 arraycopy(header, 0, bufResponse, 0, header.length);
                 arraycopy(questionPacket, 0, bufResponse, header.length, questionPacket.length);
+                arraycopy(answerPacket, 0, bufResponse, header.length + questionPacket.length, answerPacket.length);
 
                 final DatagramPacket packetResponse = new DatagramPacket(bufResponse, bufResponse.length, packet.getSocketAddress());
                 serverSocket.send(packetResponse);
