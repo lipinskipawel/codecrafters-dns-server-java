@@ -6,7 +6,7 @@ import static java.nio.ByteOrder.BIG_ENDIAN;
 public final class DnsAnswer {
 
     public static byte[] answer(String domain, DnsTypes.Qtype type, DnsTypes.Cclass cclass) throws IOException {
-        final var domainBytes = DnsMessage.encodeDomain(domain);
+        final var domainBytes = DnsHeader.encodeDomain(domain);
         return ByteBuffer.allocate(domainBytes.length + 14)
                 .order(BIG_ENDIAN)
                 .put(domainBytes)

@@ -13,7 +13,7 @@ public class Main {
                 serverSocket.receive(packet);
                 System.out.println("Received data");
 
-                final var header = DnsMessage.header((short) 1234, true);
+                final var header = DnsHeader.header(buf);
                 final var questionPacket = DnsQuestion.question("codecrafters.io", DnsTypes.Qtype.A, DnsTypes.Cclass.IN);
                 final var answerPacket = DnsAnswer.answer("codecrafters.io", DnsTypes.Qtype.A, DnsTypes.Cclass.IN);
 
