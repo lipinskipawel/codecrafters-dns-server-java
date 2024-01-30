@@ -5,11 +5,11 @@ import static java.nio.ByteOrder.BIG_ENDIAN;
 
 public final class DnsQuestion {
 
-    public static byte[] question(String domain, DnsTypes.Qtype qtype, DnsTypes.Cclass cclass) throws IOException {
-        final var domainBytes = DnsHeader.encodeDomain(domain);
-        return ByteBuffer.allocate(domainBytes.length + 4)
+    public static byte[] question(byte[] received, DnsTypes.Qtype qtype, DnsTypes.Cclass cclass) throws IOException {
+        final var domainName = ByteManipulation.domainName(received);
+        return ByteBuffer.allocate(domainName.length + 4)
                 .order(BIG_ENDIAN)
-                .put(domainBytes)
+                .put(domainName)
                 .putShort(qtype.getValue())
                 .putShort(cclass.getValue())
                 .array();

@@ -13,9 +13,12 @@ public class Main {
                 serverSocket.receive(packet);
                 System.out.println("Received data");
 
-                final var header = DnsHeader.header(buf);
-                final var questionPacket = DnsQuestion.question("codecrafters.io", DnsTypes.Qtype.A, DnsTypes.Cclass.IN);
-                final var answerPacket = DnsAnswer.answer("codecrafters.io", DnsTypes.Qtype.A, DnsTypes.Cclass.IN);
+                final var receivedHeader = new byte[12];
+                arraycopy(buf, 0, receivedHeader, 0, 12);
+
+                final var header = DnsHeader.header(receivedHeader);
+                final var questionPacket = DnsQuestion.question(buf, DnsTypes.Qtype.A, DnsTypes.Cclass.IN);
+                final var answerPacket = DnsAnswer.answer(buf, DnsTypes.Qtype.A, DnsTypes.Cclass.IN);
 
                 final var bufResponse = new byte[header.length + questionPacket.length + answerPacket.length];
                 arraycopy(header, 0, bufResponse, 0, header.length);
