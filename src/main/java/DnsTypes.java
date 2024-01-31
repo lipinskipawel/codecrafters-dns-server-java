@@ -1,3 +1,5 @@
+import java.util.Arrays;
+
 public final class DnsTypes {
 
     // https://datatracker.ietf.org/doc/html/rfc1035#section-3.2.2
@@ -25,6 +27,13 @@ public final class DnsTypes {
             this.value = value;
         }
 
+        public static Qtype qTypeFromShort(short qType) {
+            return Arrays.stream(Qtype.values())
+                    .filter(it -> it.value == qType)
+                    .findFirst()
+                    .orElseThrow();
+        }
+
         public short getValue() {
             return value;
         }
@@ -41,6 +50,14 @@ public final class DnsTypes {
 
         Cclass(short value) {
             this.value = value;
+        }
+
+
+        public static Cclass cClassFromShort(short clazz) {
+            return Arrays.stream(Cclass.values())
+                    .filter(it -> it.value == clazz)
+                    .findFirst()
+                    .orElseThrow();
         }
 
         public short getValue() {
