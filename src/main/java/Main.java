@@ -20,6 +20,13 @@ public class Main {
                 final var questionPacket = DnsQuestion.question(buf, DnsTypes.Qtype.A, DnsTypes.Cclass.IN);
                 final var answerPacket = DnsAnswer.answer(buf, DnsTypes.Qtype.A, DnsTypes.Cclass.IN);
 
+
+                final var bytes = ByteManipulation.domainName(buf);
+                if (bytes.size() > 1) {
+                    header[5] = (byte) 2;
+                    header[7] = (byte) 2;
+                }
+
                 final var bufResponse = new byte[header.length + questionPacket.length + answerPacket.length];
                 arraycopy(header, 0, bufResponse, 0, header.length);
                 arraycopy(questionPacket, 0, bufResponse, header.length, questionPacket.length);
